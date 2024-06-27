@@ -17,7 +17,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     /** @var array */
     private array $selectionSet = [];
 
-    /** @var array<null|scalar|array<?scalar>|Stringable> */
+    /** @var array<null|scalar|array<?scalar>|RawObject> */
     private array $argumentsList = [];
 
     public function __construct(string $queryObject = '', string $alias = '')
@@ -56,7 +56,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    /** @param null|scalar|array<?scalar>|Stringable $argumentValue */
+    /** @param null|scalar|array<?scalar>|RawObject $argumentValue */
     protected function setArgument(
         string $argumentName,
         null|bool|float|int|string|array|Stringable $argumentValue
@@ -72,6 +72,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
+    /** @param null|scalar|array<?scalar>|RawObject $defaultValue */
     protected function setVariable(
         string $name,
         string $type,
