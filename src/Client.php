@@ -61,11 +61,7 @@ class Client
     }
 
     /**
-     * @param Query|QueryBuilderInterface $query
-     * @param bool                        $resultsAsArray
-     * @param array                       $variables
-     *
-     * @return Results
+     * @param array<string,string> $variables
      * @throws QueryError
      */
     public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
@@ -82,7 +78,7 @@ class Client
     }
 
     /**
-     * @param array  $variables
+     * @param array<string,string> $variables
      * @throws QueryError
      */
     public function runRawQuery(
