@@ -21,7 +21,7 @@ class Query implements Stringable
     protected const QUERY_FORMAT = '%s%s%s';
 
     /** The type of the operation to be executed on the GraphQL server */
-    protected const OPERATION_TYPE = 'query';
+    protected const OPERATION_TYPE = OperationType::Query->value;
 
     /** The name of the operation to be run on the server */
     protected string $operationName = '';
