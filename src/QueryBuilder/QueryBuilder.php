@@ -2,9 +2,11 @@
 
 namespace GraphQL\QueryBuilder;
 
+use BackedEnum;
 use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
+use Stringable;
 
 class QueryBuilder extends AbstractQueryBuilder
 {
@@ -14,12 +16,12 @@ class QueryBuilder extends AbstractQueryBuilder
         return parent::selectField($selection);
     }
 
-    /** @param null|scalar|array<?scalar>|RawObject $argumentValue */
+    /** @param null|scalar|array<mixed>|BackedEnum|Stringable $value */
     public function setArgument(
-        string $argumentName,
-        null|bool|float|int|string|array|RawObject $argumentValue,
+        string $name,
+        null|bool|float|int|string|array|BackedEnum|Stringable $value,
     ): AbstractQueryBuilder {
-        return parent::setArgument($argumentName, $argumentValue);
+        return parent::setArgument($name, $value);
     }
 
     /** @param null|scalar|array<?scalar>|RawObject $defaultValue */

@@ -2,6 +2,7 @@
 
 namespace GraphQL;
 
+use BackedEnum;
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
@@ -36,7 +37,7 @@ class Query implements Stringable
     /**
      * The list of arguments used when querying data
      *
-     * @var array<null|scalar|array<?scalar>|Stringable>
+     * @var array<null|array<mixed>|scalar|Stringable|BackedEnum>
      */
     protected array $arguments = [];
 
@@ -99,7 +100,7 @@ class Query implements Stringable
     }
 
     /**
-     * @param array<null|scalar|array<?scalar>|Stringable> $arguments
+     * @param array<null|scalar|array<mixed>|Stringable|BackedEnum> $arguments
      * @throws ArgumentException for invalid arguments
      */
     public function setArguments(array $arguments): Query
@@ -112,21 +113,7 @@ class Query implements Stringable
                 );
             }
 
-            if (is_array($argument)) {
-                foreach ($argument as $item) {
-                    if (!is_null($item) && !is_scalar($item)) {
-                        throw new ArgumentException(
-                            'Only arrays with null|scalar items can be handled',
-                        );
-                    }
-                }
-            }
-
-            if (is_object($argument) && !method_exists($argument, '__toString')) {
-                throw new ArgumentException(
-                    'Only objects with the __toString() method can be handled',
-                );
-            }
+            $this->validateArgument($argument);
         }
 
         $this->arguments = $arguments;
@@ -134,7 +121,32 @@ class Query implements Stringable
         return $this;
     }
 
-    /** @return array<null|scalar|array<?scalar>|Stringable> */
+    private function validateArgument(mixed $value): void
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $this->validateArgument($item);
+            }
+
+            return;
+        }
+
+        if (
+            is_null($value)
+            || is_scalar($value)
+            || $value instanceof Stringable
+            || $value instanceof BackedEnum
+        ) {
+            return;
+        }
+
+        throw new ArgumentException(sprintf(
+            '%s cannot be supported',
+            gettype($value),
+        ));
+    }
+
+    /** @return array<null|scalar|array<?scalar>|Stringable|BackedEnum> */
     public function getArguments(): array
     {
         return $this->arguments;
@@ -156,16 +168,10 @@ class Query implements Stringable
         }
 
         $formattedArguments = [];
-        foreach ($this->arguments as $name => $argument) {
-            if (is_scalar($argument) || is_null($argument)) {
-                $formattedArgument = StringLiteralFormatter::formatValueForRHS($argument);
-            } elseif (is_array($argument)) {
-                $formattedArgument = StringLiteralFormatter::formatArrayForGQLQuery($argument);
-            } else {
-                $formattedArgument = (string) $argument;
-            }
-
-            $formattedArguments[] = sprintf('%s: %s', $name, $formattedArgument);
+        foreach ($this->arguments as $name => $value) {
+            $formattedArguments[] = sprintf('%s: %s', $name, is_array($value) ?
+                    StringLiteralFormatter::formatArrayForGQLQuery($value) :
+                    StringLiteralFormatter::formatValueForRHS($value));
         }
 
         return sprintf('(%s)', implode(' ', $formattedArguments));

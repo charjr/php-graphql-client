@@ -2,6 +2,7 @@
 
 namespace GraphQL\QueryBuilder;
 
+use BackedEnum;
 use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
@@ -18,7 +19,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     /** @var array<InlineFragment|Query|string> */
     private array $selectionSet = [];
 
-    /** @var array<null|scalar|array<?scalar>|RawObject> */
+    /** @var array<null|scalar|array<mixed>|Stringable|BackedEnum> */
     private array $argumentsList = [];
 
     public function __construct(string $queryObject = '', string $alias = '')
@@ -52,17 +53,13 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    /** @param null|scalar|array<?scalar>|RawObject $argumentValue */
+    /** @param null|array<mixed>|scalar|BackedEnum|Stringable $value */
     protected function setArgument(
-        string $argumentName,
-        null|bool|float|int|string|array|RawObject $argumentValue
+        string $name,
+        null|bool|float|int|string|array|Stringable|BackedEnum $value
     ): self {
-        if (
-            is_scalar($argumentValue) ||
-            is_array($argumentValue) ||
-            $argumentValue instanceof RawObject
-        ) {
-            $this->argumentsList[$argumentName] = $argumentValue;
+        if (!is_null($value)) {
+            $this->argumentsList[$name] = $value;
         }
 
         return $this;
