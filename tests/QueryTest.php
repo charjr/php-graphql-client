@@ -9,6 +9,7 @@ use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
 use GraphQL\InlineFragment;
+use GraphQL\OperationType;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
@@ -44,10 +45,41 @@ class QueryTest extends TestCase
     }
 
     #[Test]
+    public function itGetsArguments(): void
+    {
+        $arguments = ['someField' => 'someValue'];
+        $sut = (new Query('things'))->setArguments($arguments);
+
+        self::assertSame($arguments, $sut->getArguments());
+    }
+
+
+    /** @param array<mixed> $arguments */
+    #[Test, DataProvider('provideInvalidArguments')]
+    public function itInvalidatesUnsupportedArguments(array $arguments): void
+    {
+        $sut = new Query();
+
+        self::expectException(ArgumentException::class);
+
+        $sut->setArguments($arguments);
+    }
+
+    #[Test]
     #[DataProvider('provideQueriesToCastToString')]
     public function itIsStringable(string $expected, Query $sut): void
     {
         self::assertSame($expected, $sut->__toString());
+    }
+
+    /** @return Generator<array{ 0: array<mixed> }> */
+    public static function provideInvalidArguments(): Generator
+    {
+        yield \DateTime::class => [[new \DateTime()]];
+
+        yield sprintf('nested array of %s', \DateTime::class) => [
+            [[[[new \DateTime()]]]],
+        ];
     }
 
     /** @return Generator<array{ 0: string, 1: Query }> */
@@ -188,6 +220,22 @@ class QueryTest extends TestCase
             'query { Object(stringListArg: ["hello", "world"]) }',
             (new Query('Object'))
                 ->setArguments(['stringListArg' => ['hello', 'world']]),
+        ];
+
+        yield 'nested list argument' => [
+            'query { Object(nestedListArg: [[["hello", "world"]]]) }',
+            (new Query('Object'))
+                ->setArguments(['nestedListArg' => [[['hello', 'world']]]]),
+        ];
+
+        yield 'nested list of BackedEnums argument' => [
+            'query { Object(nestedEnumArg: [[[query, mutation, subscription]]]) }',
+            (new Query('Object'))
+                ->setArguments(['nestedEnumArg' => [[[
+                    OperationType::Query,
+                    OperationType::Mutation,
+                    OperationType::Subscription,
+                ]]]]),
         ];
 
         yield 'json object argument' => [
