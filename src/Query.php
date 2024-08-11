@@ -183,9 +183,12 @@ class Query implements Stringable
 
     protected function generateSignature(): string
     {
-        $signatureFormat = '%s%s%s';
-
-        return sprintf($signatureFormat, static::OPERATION_TYPE, $this->operationName, $this->constructVariables());
+        return sprintf(
+            '%s%s%s',
+            static::OPERATION_TYPE,
+            $this->operationName,
+            $this->constructVariables()
+        );
     }
 
     public function setAsNested(): void
