@@ -16,7 +16,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     /** @var Variable[] */
     private array $variables = [];
 
-    /** @var array */
+    /** @var array<string|InlineFragment|Query|QueryBuilderInterface> */
     private array $selectionSet = [];
 
     /** @var array<null|scalar|array<mixed>|Stringable|BackedEnum> */
@@ -51,7 +51,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     protected function selectField(
-        Query|QueryBuilder|string $selectedField,
+        InlineFragment|Query|QueryBuilderInterface|string $selectedField,
     ): AbstractQueryBuilder {
         $this->selectionSet[] = $selectedField;
 

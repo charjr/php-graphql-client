@@ -3,36 +3,50 @@
 namespace GraphQL;
 
 use GraphQL\Exception\InvalidSelectionException;
+use GraphQL\QueryBuilder\QueryBuilderInterface;
 
 trait FieldTrait
 {
     /**
      * Stores the selection set desired to get from the query, can include nested queries
      *
-     * @var array<string|array<string>>
+     * @var array<string|InlineFragment|Query>
      */
     protected array $selectionSet;
 
     /**
-     * @param array<string|InlineFragment|Query> $selectionSet
+     * @param array<InlineFragment|Query|QueryBuilderInterface|string> $selectionSet
      * @throws InvalidSelectionException
      */
-    public function setSelectionSet(array $selectionSet)
+    public function setSelectionSet(array $selectionSet): self
     {
-        $nonStringsFields = array_filter($selectionSet, function ($element) {
-            return
-                !is_string($element) &&
-                !$element instanceof Query &&
-                !$element instanceof InlineFragment;
-        });
-        if (!empty($nonStringsFields)) {
-            throw new InvalidSelectionException(
-                'One or more of the selection fields provided is not of type string or Query'
-            );
+        $selectionSet = array_map(
+            fn ($s) => $s instanceof QueryBuilderInterface ?
+                $s->getQuery() :
+                $s,
+            $selectionSet,
+        );
+
+
+        foreach ($selectionSet as $selection) {
+            if (
+                !is_string($selection) &&
+                !$selection instanceof Query &&
+                !$selection instanceof InlineFragment
+            ) {
+                throw new InvalidSelectionException(sprintf(
+                    'Can only set a selection from one of the following: %s',
+                    implode(', ', [
+                        InlineFragment::class,
+                        Query::class,
+                        QueryBuilderInterface::class,
+                        'string',
+                    ]),
+                ));
+            }
         }
 
         $this->selectionSet = $selectionSet;
-
         return $this;
     }
 
@@ -53,7 +67,8 @@ trait FieldTrait
         )));
     }
 
-    public function getSelectionSet()
+    /** @return array<string|InlineFragment|Query> */
+    public function getSelectionSet(): array
     {
         return $this->selectionSet;
     }

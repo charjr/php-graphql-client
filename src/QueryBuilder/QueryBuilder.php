@@ -11,7 +11,7 @@ use Stringable;
 class QueryBuilder extends AbstractQueryBuilder
 {
     public function selectField(
-        Query|QueryBuilder|string $selectedField
+        InlineFragment|Query|QueryBuilderInterface|string $selectedField,
     ): AbstractQueryBuilder {
         return parent::selectField($selectedField);
     }
