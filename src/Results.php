@@ -56,9 +56,9 @@ class Results
     /**
      * Returns entire parsed results in the requested format
      *
-     * @return array<?scalar>|object
+     * @return null|array<?scalar>|object
      */
-    public function getResults(): array|object
+    public function getResults(): null|array|object
     {
         return $this->results;
     }
