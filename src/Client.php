@@ -62,14 +62,13 @@ class Client
      * @param array<string,string> $variables
      * @throws QueryError
      */
-    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
-    {
+    public function runQuery(
+        Query|QueryBuilderInterface $query,
+        bool $resultsAsArray = false,
+        array $variables = []
+    ): Results {
         if ($query instanceof QueryBuilderInterface) {
             $query = $query->getQuery();
-        }
-
-        if (!$query instanceof Query) {
-            throw new TypeError('Client::runQuery accepts the first argument of type Query or QueryBuilderInterface');
         }
 
         return $this->runRawQuery((string) $query, $resultsAsArray, $variables);
@@ -81,7 +80,7 @@ class Client
      */
     public function runRawQuery(
         string $queryString,
-        $resultsAsArray = false,
+        bool $resultsAsArray = false,
         array $variables = []
     ): Results {
         $request = new Request($this->requestMethod, $this->endpointUrl);
