@@ -5,7 +5,6 @@ namespace GraphQL\QueryBuilder;
 use BackedEnum;
 use GraphQL\InlineFragment;
 use GraphQL\Query;
-use GraphQL\RawObject;
 use Stringable;
 
 class QueryBuilder extends AbstractQueryBuilder
