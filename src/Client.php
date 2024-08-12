@@ -21,16 +21,14 @@ class Client
     /** @var array<string|array<string>> */
     protected array $httpHeaders;
 
-    /**
-     * @var array
-     */
+    /** @var array<mixed> */
     protected array $options;
 
     /**
      * Client constructor.
      *
-     * @param array<string|array<string>> $authorizationHeaders
-     * @param array $httpOptions
+     * @param array<string, string|array<string>> $authorizationHeaders
+     * @param array<string,mixed> $httpOptions
      */
     public function __construct(
         protected string $endpointUrl,
