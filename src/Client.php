@@ -3,7 +3,6 @@
 namespace GraphQL;
 
 use GraphQL\Auth\AuthInterface;
-use GraphQL\Auth\HeaderAuth;
 use GraphQL\Exception\QueryError;
 use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
@@ -12,7 +11,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Client\ClientInterface;
-use TypeError;
 
 class Client
 {
