@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GraphQL\Tests;
+namespace GraphQL\Tests\Unit;
 
 use Generator;
 use GraphQL\Exception\ArgumentException;
-use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
 use GraphQL\InlineFragment;
 use GraphQL\OperationType;
