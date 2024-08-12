@@ -2,14 +2,19 @@
 
 namespace GraphQL;
 
+use BackedEnum;
+use Stringable;
+
 final readonly class Variable implements \Stringable
 {
-    /** @param null|scalar|array<mixed>|RawObject $defaultValue */
+    /**
+     * @param null|array<mixed>|scalar|BackedEnum|Stringable $defaultValue
+     */
     public function __construct(
         public string $name,
         public string $type,
         public bool $nonNullable = false,
-        public null|bool|float|int|string|array|RawObject $defaultValue = null,
+        public null|bool|float|int|string|array|Stringable|BackedEnum $defaultValue = null,
     ) {
     }
 

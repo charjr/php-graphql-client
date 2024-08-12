@@ -24,12 +24,12 @@ class QueryBuilder extends AbstractQueryBuilder
         return parent::setArgument($name, $value);
     }
 
-    /** @param null|scalar|array<?scalar>|RawObject $defaultValue */
+    /** @param null|array<mixed>|scalar|BackedEnum|Stringable $defaultValue */
     public function setVariable(
         string $name,
         string $type,
         bool $isRequired = false,
-        null|bool|float|int|string|array|RawObject $defaultValue = null,
+        null|bool|float|int|string|array|Stringable|BackedEnum $defaultValue = null,
     ): AbstractQueryBuilder {
         return parent::setVariable($name, $type, $isRequired, $defaultValue);
     }

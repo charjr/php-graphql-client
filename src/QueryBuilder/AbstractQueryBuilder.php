@@ -58,7 +58,9 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    /** @param null|array<mixed>|scalar|BackedEnum|Stringable $value */
+    /**
+     * @param null|array<mixed>|scalar|BackedEnum|Stringable $value
+     */
     protected function setArgument(
         string $name,
         null|bool|float|int|string|array|Stringable|BackedEnum $value
@@ -70,12 +72,12 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    /** @param null|scalar|array<?scalar>|RawObject $defaultValue */
+    /** @param null|array<mixed>|scalar|BackedEnum|Stringable $defaultValue */
     protected function setVariable(
         string $name,
         string $type,
         bool $isRequired = false,
-        mixed $defaultValue = null
+        null|bool|float|int|string|array|Stringable|BackedEnum $defaultValue = null,
     ): AbstractQueryBuilder {
         $this->variables[] = new Variable(
             $name,
